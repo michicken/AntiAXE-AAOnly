@@ -12,6 +12,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class AntiAxeTransformerTest {
 
@@ -23,6 +24,9 @@ public class AntiAxeTransformerTest {
         fixture.name = "net/minecraft/client/Minecraft";
         fixture.superName = "java/lang/Object";
         MethodNode method = new MethodNode(Opcodes.ACC_PRIVATE, "rightClickMouse", "()V", null, null);
+        method.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/System",
+            "nanoTime", "()J", false));
+        method.instructions.add(new InsnNode(Opcodes.POP2));
         method.instructions.add(new InsnNode(Opcodes.RETURN));
         fixture.methods.add(method);
         ClassWriter source = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -34,14 +38,23 @@ public class AntiAxeTransformerTest {
         new ClassReader(transformed).accept(result, 0);
         int guardCalls = 0;
         int returns = 0;
+        int guardIndex = -1;
+        int vanillaBodyIndex = -1;
+        int index = 0;
         for (AbstractInsnNode instruction : result.methods.get(0).instructions.toArray()) {
             if (instruction instanceof MethodInsnNode
                     && "shouldBlockRightClick".equals(((MethodInsnNode) instruction).name)) {
                 guardCalls++;
             }
+            if (instruction instanceof MethodInsnNode
+                    && "nanoTime".equals(((MethodInsnNode) instruction).name)) vanillaBodyIndex = index;
+            if (instruction instanceof MethodInsnNode
+                    && "shouldBlockRightClick".equals(((MethodInsnNode) instruction).name)) guardIndex = index;
             if (instruction.getOpcode() == Opcodes.RETURN) returns++;
+            index++;
         }
         assertEquals(1, guardCalls);
         assertEquals(2, returns);
+        assertTrue("guard must run before vanilla right-click code", guardIndex >= 0 && guardIndex < vanillaBodyIndex);
     }
 }
