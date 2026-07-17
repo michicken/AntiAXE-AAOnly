@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "antiaxeaaonly",
+    "name": "AntiAXE For AA --MICx",
+    "description": "Locally blocks Lucky Chest right-clicks during The Puncher claim window. No packet modification.",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": ["MICx"],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

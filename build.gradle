@@ -1,0 +1,51 @@
+plugins {
+    id "java"
+    id "net.minecraftforge.gradle.forge"
+}
+
+version = "1.0.0"
+group = "dev.micx"
+archivesBaseName = "AntiAXE-AAOnly"
+
+sourceCompatibility = targetCompatibility = 1.8
+compileJava.options.encoding = "UTF-8"
+
+repositories {
+    maven { url = "https://bmclapi2.bangbang93.com/maven/" }
+    maven { url = "https://maven.aliyun.com/repository/public/" }
+    mavenCentral()
+    maven { url = "https://maven.minecraftforge.net/" }
+    maven { url = "https://jitpack.io/" }
+}
+
+minecraft {
+    version = "1.8.9-11.15.1.2318-1.8.9"
+    runDir = "run"
+    mappings = "stable_22"
+    makeObfSourceJar = false
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "mcmod.info"
+        expand "version": project.version, "mcversion": project.minecraft.version
+    }
+}
+
+dependencies {
+    testCompile "junit:junit:4.13.2"
+}
+
+jar {
+    archiveName = "AntiAXE-AAOnly.jar"
+    manifest {
+        attributes(
+            "ModSide": "CLIENT",
+            "FMLCorePlugin": "dev.micx.antiaxe.asm.AntiAxeLoadingPlugin",
+            "FMLCorePluginContainsFMLMod": "true"
+        )
+    }
+}
