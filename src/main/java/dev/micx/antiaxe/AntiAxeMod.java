@@ -23,7 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public final class AntiAxeMod {
 
     public static final String MOD_ID = "antiaxeaaonly";
-    public static final String VERSION = "1.0.1";
+    public static final String VERSION = "1.0.2";
 
     @Mod.EventHandler
     public void initialize(FMLInitializationEvent event) {
@@ -33,11 +33,12 @@ public final class AntiAxeMod {
     @SubscribeEvent(receiveCanceled = true)
     public void onChat(ClientChatReceivedEvent event) {
         if (event.type != 0 && event.type != 1) return;
+        Minecraft mc = Minecraft.getMinecraft();
+        if (!AntiAxeAaContext.isInAA(mc)) return;
         String text = event.message == null ? null : event.message.getUnformattedText();
         AntiAxeRules.ChatAction action = AntiAxeRules.classifyChat(text);
         if (action == AntiAxeRules.ChatAction.ARM) {
             AntiAxeGuard.arm(System.currentTimeMillis());
-            Minecraft mc = Minecraft.getMinecraft();
             if (mc.thePlayer != null) {
                 mc.thePlayer.addChatMessage(new ChatComponentText(
                     EnumChatFormatting.RED + "[AntiAXE] The Puncher 领取区右键已锁定 10 秒"));
@@ -49,7 +50,10 @@ public final class AntiAxeMod {
 
     @SubscribeEvent
     public void onWorldUnload(WorldEvent.Unload event) {
-        if (event.world != null && event.world.isRemote) AntiAxeGuard.disarm();
+        if (event.world != null && event.world.isRemote) {
+            AntiAxeGuard.disarm();
+            AntiAxeAaContext.clear();
+        }
     }
 
     @SubscribeEvent
@@ -57,6 +61,7 @@ public final class AntiAxeMod {
         if (event.type != RenderGameOverlayEvent.ElementType.TEXT || !AntiAxeGuard.isArmed()) return;
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.thePlayer == null || mc.theWorld == null) return;
+        if (!AntiAxeAaContext.isInAA(mc)) return;
         boolean blocking = AntiAxeGuard.isLookingAtClaimZone(mc);
         String text = blocking ? "§c§lAntiAXE §f右键已锁" : "§6AntiAXE §fThe Puncher";
         text += String.format(java.util.Locale.ROOT, " §7%.1fs", AntiAxeGuard.remainingMs() / 1000.0);

@@ -48,7 +48,12 @@ public final class AntiAxeGuard {
 
     /** Injected at the head of Minecraft.rightClickMouse(); true means local no-op. */
     public static boolean shouldBlockRightClick() {
-        return isArmed() && isLookingAtClaimZone(Minecraft.getMinecraft());
+        Minecraft mc = Minecraft.getMinecraft();
+        if (!AntiAxeAaContext.isInAA(mc)) {
+            if (armedUntil > 0L) disarm();
+            return false;
+        }
+        return isArmed() && isLookingAtClaimZone(mc);
     }
 
     public static boolean isLookingAtClaimZone(Minecraft mc) {
