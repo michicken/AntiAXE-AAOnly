@@ -1,10 +1,12 @@
 # AntiAXE For AA --MICx
 
-A minimal Minecraft Forge 1.8.9 client mod for Hypixel Zombies: Alien Arcadium.
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+A minimal open-source Minecraft Forge 1.8.9 client mod for Hypixel Zombies: Alien Arcadium.
 When the local player rolls `The Puncher`, it temporarily blocks local right-click
 handling while the crosshair intersects the Lucky Chest claim zone.
 
-Current version: **1.0.1**
+Current version: **1.0.2** — open source under the MIT License.
 
 ## Safety boundary
 
@@ -24,3 +26,7 @@ enforcement can change, so users remain responsible for checking current rules.
 ```
 
 The release artifact is `build/libs/AntiAXE-AAOnly.jar`.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
